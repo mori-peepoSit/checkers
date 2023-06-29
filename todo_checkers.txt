@@ -1,6 +1,0 @@
-Issues:
-- Doing a chain capture with 2 different pieces
-- AI runs its king around without goal (maybe intentional)
-- Chain doesnt work for last row sometimes ?
-- Ai seems dumb sometimes ?
-- Score function is too simple
