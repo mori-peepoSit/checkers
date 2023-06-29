@@ -9,9 +9,7 @@ testing_start_1 = [33, 35, 37, 39, 49, 51, 53, 55]
 white = [1, 11]
 black = [2, 22]
 
-if 0==1:
-    print(0)
-'testing'
+
 # lookup arrays
 col1 = [8,24,40,56]; col2 = [1,17,33,49]
 col3 = [10,26,42,58]; col4 = [3,19,35,51]
@@ -31,7 +29,7 @@ try:
     symbol = {0:'〇', 1:'白', 2:'黒', 11:'王', 22:'姫'}
     if input('emote mode?')=='y':
         color_dict = {2: 'Black (🔵)', 1:'White (⚪)'}
-        symbol = {0:'〇', 1:'⚪', 2:'🔵', 11:'🟦', 22:'⬜'}
+        symbol = {0:'〇', 1:'⚪', 2:'🔵', 11:'⬜', 22:'🟦'}
 except:
     print('Changed to ascii-mode')
     color_dict = {2: 'Black', 1:'White'}
