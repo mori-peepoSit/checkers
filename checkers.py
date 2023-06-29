@@ -9,6 +9,9 @@ testing_start_1 = [33, 35, 37, 39, 49, 51, 53, 55]
 white = [1, 11]
 black = [2, 22]
 
+if 0==1:
+    print(0)
+'testing'
 # lookup arrays
 col1 = [8,24,40,56]; col2 = [1,17,33,49]
 col3 = [10,26,42,58]; col4 = [3,19,35,51]
