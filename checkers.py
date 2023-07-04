@@ -28,8 +28,8 @@ try:
     color_dict = {2: 'Black (黒)', 1:'White (白)'}
     symbol = {0:'〇', 1:'白', 2:'黒', 11:'王', 22:'姫'}
     if input('emote mode?')=='y':
-        color_dict = {2: 'Black (🔵)', 1:'White (⚪)'}
-        symbol = {0:'〇', 1:'⚪', 2:'🔵', 11:'⬜', 22:'🟦'}
+        color_dict = {2: 'Black (🔵)', 1:'White (🔴)'}
+        symbol = {0:'〇', 1:'🔴', 2:'🔵', 11:'🟥', 22:'🟦'}
 except:
     print('Changed to ascii-mode')
     color_dict = {2: 'Black', 1:'White'}
@@ -54,12 +54,23 @@ board2 = fill_board(white_start, black_start, board2)
 
 
 def cmd_show(board):
-    '''displays the board on the console'''
+    '''displays the board on the console (version 2)'''
     print('\n')
     for i in range(0,len(board), 8):
-        print(f"{i:<2}|{' '.join([symbol[x] for x in board[i:i+8]])}|{i+7}")
+        row_nr=(i)//8; row_nr = row_nr%2
+        print(f"{(i//8)+1:<2}|{' '.join([symbol[x] if (i+row_nr) % 2 != 0 else '・' for i, x in enumerate(board[i:i+8])])}|")
+    print(f"  |aa‖bb‖cc‖dd‖ee‖ff‖gg‖hh|")
     print('\n')
     return
+
+
+
+def convert_coordinates_to_notation(coordinates):
+    row = coordinates // 8 + 1
+    column = coordinates % 8 + 1
+    letter = chr(ord('a') + column - 1)
+    return f"{letter}{row}"
+
 
 
 def legal_moves_black(index, board):
@@ -451,7 +462,7 @@ if __name__ == '__main__':
         # input to choose move
         print('Movelist:')
         for c, element in enumerate(moves):
-            print(f"{c:<2}",':', element); 
+            print(f"{c:<2}",':', [convert_coordinates_to_notation(i) for i in element]); 
         
         try:
             move_number = int(input('\nChoose a move ! '))
@@ -482,7 +493,7 @@ if __name__ == '__main__':
             if chain and moves:
                 print('Movelist:')
                 for c, element in enumerate(moves):
-                    print(f"{c:<2}",':', element); 
+                    print(f"{c:<2}",':', [convert_coordinates_to_notation(i) for i in element]); 
                 chosen_move = moves[int(input('\nChoose a move ! '))]
 
                 # make move
