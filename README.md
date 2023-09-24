@@ -1,5 +1,6 @@
 # checkers
 Implementation of checkers in python  
+implemented a basic cpu player that one can play against
 Using minimax with alpha-beta-pruning to improve performance for dfs for best moves for cpu player
 
 | Header 1 | Header 2 |
