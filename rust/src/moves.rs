@@ -37,6 +37,7 @@ fn pawn_move(
     let mut captures: Vec<usize> = vec![CAPTURE_CODE];
 
     let row_idx: usize = index / 4;
+    let additional_increment = row_idx%2;
     let col_pos: usize = row_idx % 2 + index - (row_idx * 4);
     match player_color {
         Color::Black => {
@@ -46,12 +47,12 @@ fn pawn_move(
             } else if index <= 7 {
                 // second to last row (can't capture here either)
                 // Left
-                if top_left_move_check(&board, &index) {
-                    non_captures.push(index - 4);
+                if top_left_move_check(&board, &index, &additional_increment) {
+                    non_captures.push(index - (4+additional_increment));
                 }
                 // Right
-                if index > 4 && top_right_move_check(&board, &index) {
-                    non_captures.push(index - 3);
+                if index > 4 && top_right_move_check(&board, &index, &additional_increment) {
+                    non_captures.push(index - (additional_increment+3));
                 }
             }
             // has to be row 3-8
@@ -90,23 +91,23 @@ fn pawn_move(
                     match index {
                         12 | 20 | 28 => {
                             // left edge
-                            if top_right_move_check(&board, &index) {
-                                non_captures.push(index - 5)
+                            if top_right_move_check(&board, &index, &additional_increment) {
+                                non_captures.push(index - (4+additional_increment))
                             }
                         }
                         11 | 19 | 27 => {
                             // right edge
-                            if top_left_move_check(&board, &index) {
-                                non_captures.push(index - 4)
+                            if top_left_move_check(&board, &index, &additional_increment) {
+                                non_captures.push(index - (3+additional_increment))
                             }
                         }
                         _ => {
                             // both dirs
-                            if top_left_move_check(&board, &index) {
-                                non_captures.push(index-4)
+                            if top_left_move_check(&board, &index, &additional_increment) {
+                                non_captures.push(index-(3+additional_increment))
                             }
-                            if top_right_move_check(&board, &index) {
-                                non_captures.push(index-5)
+                            if top_right_move_check(&board, &index, &additional_increment) {
+                                non_captures.push(index-(4+additional_increment))
                             }
                         }
                     }
@@ -121,11 +122,11 @@ fn pawn_move(
             if index >= 28 {
                 unreachable!("Should have promoted by now (White)")
             } else if index >= 24 {
-                if bottom_left_move_check(&board, &index) {
-                    non_captures.push(index + 4)
+                if bottom_left_move_check(&board, &index, &additional_increment) {
+                    non_captures.push(index + 3+additional_increment)
                 }
-                if index < 27 && bottom_right_move_check(&board, &index) {
-                    non_captures.push(index + 5)
+                if index < 27 && bottom_right_move_check(&board, &index, &additional_increment) {
+                    non_captures.push(index + 4+additional_increment)
                 }
             } else {
                 match col_pos {
@@ -159,23 +160,23 @@ fn pawn_move(
                     match index {
                         12 | 20 | 28 => {
                             // left edge
-                            if bottom_right_move_check(&board, &index) {
-                                non_captures.push(index +4)
+                            if bottom_right_move_check(&board, &index, &additional_increment) {
+                                non_captures.push(index +3+additional_increment)
                             }
                         }
                         11 | 19 | 27 => {
                             // right edge
-                            if bottom_left_move_check(&board, &index) {
-                                non_captures.push(index +5)
+                            if bottom_left_move_check(&board, &index, &additional_increment) {
+                                non_captures.push(index +4+additional_increment)
                             }
                         }
                         _ => {
                             // both dirs
-                            if bottom_left_move_check(&board, &index) {
-                                non_captures.push(index+5)
+                            if bottom_left_move_check(&board, &index, &additional_increment) {
+                                non_captures.push(index+4+additional_increment)
                             }
-                            if bottom_right_move_check(&board, &index) {
-                                non_captures.push(index+4)
+                            if bottom_right_move_check(&board, &index, &additional_increment) {
+                                non_captures.push(index+3+additional_increment)
                             }
                         }
                     }
@@ -205,29 +206,29 @@ fn top_right_capture_check(board: &[Piece; 32], index: &usize) -> bool {
     return false;
 }
 
-fn top_left_move_check(board: &[Piece; 32], index: &usize) -> bool {
-    if board[index - 5] == Piece::Empty {
+fn top_left_move_check(board: &[Piece; 32], index: &usize, increment: &usize) -> bool {
+    if board[index - (4+increment)] == Piece::Empty {
         return true;
     }
     return false;
 }
 
-fn top_right_move_check(board: &[Piece; 32], index: &usize) -> bool {
-    if board[index - 4] == Piece::Empty {
+fn top_right_move_check(board: &[Piece; 32], index: &usize, increment: &usize) -> bool {
+    if board[index - (3+increment)] == Piece::Empty {
         return true;
     }
     return false;
 }
 
-fn bottom_left_move_check(board: &[Piece; 32], index: &usize) -> bool {
-    if board[index + 4] == Piece::Empty {
+fn bottom_left_move_check(board: &[Piece; 32], index: &usize, increment: &usize) -> bool {
+    if board[index + 3+increment] == Piece::Empty {
         return true;
     }
     return false;
 }
 
-fn bottom_right_move_check(board: &[Piece; 32], index: &usize) -> bool {
-    if board[index + 5] == Piece::Empty {
+fn bottom_right_move_check(board: &[Piece; 32], index: &usize, increment: &usize) -> bool {
+    if board[index + 4+increment] == Piece::Empty {
         return true;
     }
     return false;
