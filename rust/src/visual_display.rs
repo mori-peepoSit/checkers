@@ -1,6 +1,6 @@
 use crate::board_setup;
 
-pub fn print_board(board: [board_setup::Piece; 32]) {
+pub fn print_board(board: &[board_setup::Piece; 32]) {
     println!("");
     let mut start_of_row: usize;
     for row_idx in 0..8 {

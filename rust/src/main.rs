@@ -1,11 +1,9 @@
-use checkers_rust::{board_setup, visual_display};
+use checkers_rust::{board_setup, moves::{self, get_legal_moves}, visual_display};
 
 fn main() {
     let board = board_setup::make_board(board_setup::BoardConfig::Default);
     // let mut player: setup::Color = setup::Color::Black;
-    visual_display::print_board(board);
+    visual_display::print_board(&board);
 
-    for i in 0..32 {
-        print!("{} ", visual_display::convert_idx_to_coords(i));
-    }
+    dbg!(get_legal_moves(&board, 20));
 }
