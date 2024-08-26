@@ -5,5 +5,7 @@ fn main() {
     // let mut player: setup::Color = setup::Color::Black;
     visual_display::print_board(&board);
 
-    dbg!(get_legal_moves(&board, 20));
+    for i in 0..32 {
+        dbg!(i, get_legal_moves(&board, i));
+    }
 }
