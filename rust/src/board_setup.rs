@@ -39,6 +39,30 @@ pub fn make_board(config: BoardConfig ) -> [Piece; 32] {
                 Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, 
                 ];
         },
+        BoardConfig::CaptureTest => {
+            return [
+                Piece::WhitePawn, Piece::WhitePawn, Piece::WhitePawn, Piece::WhitePawn,
+                Piece::WhitePawn, Piece::WhitePawn, Piece::WhitePawn, Piece::WhitePawn,
+                Piece::WhitePawn, Piece::WhitePawn, Piece::WhitePawn, Piece::WhitePawn,
+                Piece::Empty, Piece::Empty, Piece::Empty, Piece::Empty, 
+                Piece::Empty, Piece::WhitePawn, Piece::Empty, Piece::Empty, 
+                Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, 
+                Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, 
+                Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, 
+                ];
+        },
+        BoardConfig::ChainCaptureTest => {
+            return [
+                Piece::Empty,     Piece::Empty,     Piece::Empty,     Piece::Empty, 
+                Piece::Empty,     Piece::Empty,     Piece::Empty,     Piece::Empty, 
+                Piece::Empty,     Piece::WhitePawn, Piece::WhitePawn, Piece::Empty, 
+                Piece::Empty,     Piece::Empty,     Piece::Empty,     Piece::Empty, 
+                Piece::Empty,     Piece::WhitePawn, Piece::WhitePawn, Piece::Empty, 
+                Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, 
+                Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, 
+                Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, 
+                ];
+        }
         _ => {
             const PIECE: Piece = Piece::Empty;
             return [PIECE; 32];
@@ -85,7 +109,7 @@ pub enum Color {
 
 pub enum BoardConfig {
     Default,
-    Test1,
-    Test2,
+    CaptureTest,
+    ChainCaptureTest,
     Empty,
 }
