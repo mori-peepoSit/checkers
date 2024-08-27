@@ -1,5 +1,6 @@
 use crate::board_setup::{Color, Piece};
-use std::{io::Empty, vec};
+use std::{io::Empty, ops::Index, vec};
+use std::io;
 
 const CAPTURE_CODE: u8 = 250;
 const NON_CAPTURE_CODE: u8 = 251;
@@ -22,13 +23,13 @@ pub fn get_legal_moves(board: &[Piece; 32], index: u8) -> Vec<u8> {
             moves = pawn_move(board, index, &Color::Black);
         }
         Piece::BlackQueen => {
-            moves = queen_move(board, index, &Color::Black);
+            moves = queen_move(board, index, &Color::Black, &mut vec![]);
         }
         Piece::WhitePawn => {
             moves = pawn_move(board, index, &Color::White);
         }
         Piece::WhiteQueen => {
-            moves = queen_move(board, index, &Color::White);
+            moves = queen_move(board, index, &Color::White, &mut vec![]);
         }
         Piece::Empty => {
             return vec![EMPTY_CODE];
@@ -357,10 +358,11 @@ fn pawn_move(board: &[Piece; 32], index: u8, player_color: &Color) -> Vec<u8> {
     }
 }
 
-fn queen_move(board: &[Piece; 32], index: u8, player_color: &Color) -> Vec<u8> {
+fn queen_move(board: &[Piece; 32], index: u8, player_color: &Color, visited_indices: &mut Vec<u8>) -> Vec<u8> {
     let mut non_captures: Vec<u8> = vec![NON_CAPTURE_CODE];
     let mut captures: Vec<u8> = vec![CAPTURE_CODE];
     let mut capture_chain: Vec<u8> = vec![CAPTURE_CODE];
+    let mut helper: Vec<u8> = vec![];
 
     match player_color {
         Color::Black => {
@@ -368,8 +370,12 @@ fn queen_move(board: &[Piece; 32], index: u8, player_color: &Color) -> Vec<u8> {
             // Else remember the last move
             // use 4 stacks ?
             let fields = get_directly_adjacent_fields(index);
-            for (direction, field) in fields.iter().enumerate(){
-                if *field == EMPTY_CODE {
+            // dbg!(&fields, &visited_indices);
+            // let mut buffer = String::new();
+            // io::stdin().read_line(&mut buffer).unwrap();
+            for (direction, field) in fields.iter().enumerate() {
+                //dbg!(visited_indices.contains(field), *field == EMPTY_CODE, field);
+                if *field == EMPTY_CODE || visited_indices.contains(field){
                     break;
                 }
                 match board[*field as usize] {
@@ -377,31 +383,34 @@ fn queen_move(board: &[Piece; 32], index: u8, player_color: &Color) -> Vec<u8> {
                         let target = get_directly_adjacent_fields(*field)[direction];
                         if board[(target) as usize] == Piece::Empty {
                             captures.push(target);
+                            helper.push(*field);
                         }
                     }
                     Piece::Empty => non_captures.push(*field),
                     _ => {}
                 }
             }
-            
         }
         Color::White => {}
     }
+    // dbg!(&index, visited_indices.len(), captures.len(), non_captures.len());
 
     if captures.len() > 1 {
+        dbg!(&captures);
         for cap in captures {
             if cap > 31 {
                 continue;
             }
             capture_chain.push(cap);
-            let recursive_return_value = &mut queen_move(board, cap, player_color);
+            visited_indices.append(&mut helper);
+            let recursive_return_value = &mut queen_move(board, cap, player_color, visited_indices);
             if (*recursive_return_value).len() > 1 && recursive_return_value[0] == CAPTURE_CODE {
                 capture_chain.append(recursive_return_value);
             }
         }
+        dbg!(&capture_chain);
         return capture_chain;
     } else if non_captures.len() > 1 {
-        println!("ncaptures");
         return non_captures;
     } else {
         return vec![ERROR_CODE_MOVES];

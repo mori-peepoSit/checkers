@@ -126,3 +126,17 @@ pub enum BoardConfig {
     ChainCaptureTest2,
     Empty,
 }
+
+pub fn promote_board(board: &mut [Piece; 32]) -> &mut [Piece; 32] {
+    for index in 0..4 {
+        if board[index] == Piece::BlackPawn{
+            board[index] = Piece::BlackQueen;
+        }
+    }
+    for index in 28..32 {
+        if board[index] == Piece::WhitePawn{
+            board[index] = Piece::WhiteQueen;
+        }
+    }
+    return board;
+}
