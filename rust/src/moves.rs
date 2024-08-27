@@ -1,36 +1,40 @@
 use crate::board_setup::{Color, Piece};
-    use std::vec;
+use std::{io::Empty, vec};
 
 const CAPTURE_CODE: u8 = 250;
 const NON_CAPTURE_CODE: u8 = 251;
 const EMPTY_CODE: u8 = 252;
 const ERROR_CODE_MOVES: u8 = u8::MAX;
 const SEPARATOR_VALUE: u8 = 240;
+const TOP_ROW: [u8; 4] = [0, 1, 2, 3];
+const LEFTMOST_COLUMN: [u8; 4] = [4, 12, 20, 28];
+const BOTTOM_ROW: [u8; 4] = [28, 29, 30, 31];
+const RIGHTMOST_COLUMN: [u8; 4] = [3, 11, 19, 27];
+const TWO_DIAGONAL_INCREMENTS: [i8; 4] = [-9, 7, 9, -7];
 
 /// Given an index and a board return a Vector of legal targets for that move
 /// Might have to return not just scalars but also vectors again (for chain attacking)
 /// Make a check for forcing moves here
 pub fn get_legal_moves(board: &[Piece; 32], index: u8) -> Vec<u8> {
-    if board[index as usize] == Piece::Empty {
-        // Not a valid piece
-        // Consider panicking here or returning a Result<Vec<u8>, Err> instead of just a vector
-        return vec![EMPTY_CODE];
-    }
     let mut moves: Vec<u8>;
     match board[index as usize] {
         Piece::BlackPawn => {
-            moves =  pawn_move(board, index, &Color::Black);
-        },
-        Piece::BlackQueen => return queen_move(board, index, Color::Black),
+            moves = pawn_move(board, index, &Color::Black);
+        }
+        Piece::BlackQueen => {
+            moves = queen_move(board, index, &Color::Black);
+        }
         Piece::WhitePawn => {
-            moves =  pawn_move(board, index, &Color::White);
-        },
-        Piece::WhiteQueen => return queen_move(board, index, Color::White),
-        _ => {
-            unreachable!("Unknown piece")
+            moves = pawn_move(board, index, &Color::White);
+        }
+        Piece::WhiteQueen => {
+            moves = queen_move(board, index, &Color::White);
+        }
+        Piece::Empty => {
+            return vec![EMPTY_CODE];
         }
     }
-    let code  = moves.swap_remove(0);
+    let code = moves.swap_remove(0);
     if moves.len() == 0 {
         moves.push(EMPTY_CODE);
     }
@@ -38,26 +42,24 @@ pub fn get_legal_moves(board: &[Piece; 32], index: u8) -> Vec<u8> {
         CAPTURE_CODE => {
             // recurse
             return moves;
-        },
+        }
         NON_CAPTURE_CODE => {
             return moves;
-        },
+        }
         EMPTY_CODE => {
             return moves;
         }
         ERROR_CODE_MOVES => {
             return moves;
-        },
-        _ => {unreachable!("no code provided after getting moves ?")}
+        }
+        _ => {
+            unreachable!("no code provided after getting moves ?")
+        }
     }
 }
 
 // Call this recursively perhaps
-fn pawn_move(
-    board: &[Piece; 32],
-    index: u8,
-    player_color: &Color,
-) -> Vec<u8> {
+fn pawn_move(board: &[Piece; 32], index: u8, player_color: &Color) -> Vec<u8> {
     let mut non_captures: Vec<u8> = vec![NON_CAPTURE_CODE];
     let mut captures: Vec<u8> = vec![CAPTURE_CODE];
     let mut capture_chain: Vec<u8> = vec![CAPTURE_CODE];
@@ -122,8 +124,6 @@ fn pawn_move(
                         }
                         _ => {}
                     }
-                    
-
                 }
                 12 | 20 | 28 => {
                     // Left edge
@@ -238,24 +238,24 @@ fn pawn_move(
                 9 | 10 | 17 | 18 | 1 | 2 => {
                     // Middle Long
                     // move+cap left+right (+4 +5)
-                    match board[(index +4) as usize] {
+                    match board[(index + 4) as usize] {
                         Piece::Empty => {
-                            non_captures.push(index +4);
+                            non_captures.push(index + 4);
                         }
-                        Piece::BlackPawn | Piece::BlackQueen  => {
-                            if board[(index +7) as usize] == Piece::Empty {
-                                captures.push(index +7);
+                        Piece::BlackPawn | Piece::BlackQueen => {
+                            if board[(index + 7) as usize] == Piece::Empty {
+                                captures.push(index + 7);
                             }
                         }
                         _ => {}
                     }
-                    match board[(index +5) as usize] {
+                    match board[(index + 5) as usize] {
                         Piece::Empty => {
-                            non_captures.push(index +5);
+                            non_captures.push(index + 5);
                         }
                         Piece::BlackPawn | Piece::BlackQueen => {
-                            if board[(index +9) as usize] == Piece::Empty {
-                                captures.push(index +9);
+                            if board[(index + 9) as usize] == Piece::Empty {
+                                captures.push(index + 9);
                             }
                         }
                         _ => {}
@@ -267,7 +267,7 @@ fn pawn_move(
                         Piece::Empty => {
                             non_captures.push(index + 4);
                         }
-                        Piece::BlackPawn | Piece::BlackQueen  => {
+                        Piece::BlackPawn | Piece::BlackQueen => {
                             if board[(index + 9) as usize] == Piece::Empty {
                                 captures.push(index + 9);
                             }
@@ -277,13 +277,13 @@ fn pawn_move(
                 }
                 11 | 19 | 3 => {
                     // right edge
-                    match board[(index +4) as usize] {
+                    match board[(index + 4) as usize] {
                         Piece::Empty => {
                             non_captures.push(index + 4);
                         }
-                        Piece::BlackPawn | Piece::BlackQueen  => {
-                            if board[(index +7) as usize] == Piece::Empty {
-                                captures.push(index +7);
+                        Piece::BlackPawn | Piece::BlackQueen => {
+                            if board[(index + 7) as usize] == Piece::Empty {
+                                captures.push(index + 7);
                             }
                         }
                         _ => {}
@@ -294,20 +294,20 @@ fn pawn_move(
                     // (+3 +4)
                     match board[(index + 4) as usize] {
                         Piece::Empty => {
-                            non_captures.push(index +4);
+                            non_captures.push(index + 4);
                         }
-                        Piece::BlackPawn | Piece::BlackQueen  => {
+                        Piece::BlackPawn | Piece::BlackQueen => {
                             if board[(index + 9) as usize] == Piece::Empty {
                                 captures.push(index + 9);
                             }
                         }
                         _ => {}
                     }
-                    match board[(index +3) as usize] {
+                    match board[(index + 3) as usize] {
                         Piece::Empty => {
-                            non_captures.push(index +3);
+                            non_captures.push(index + 3);
                         }
-                        Piece::BlackPawn | Piece::BlackQueen  => {
+                        Piece::BlackPawn | Piece::BlackQueen => {
                             if board[(index + 7) as usize] == Piece::Empty {
                                 captures.push(index + 7);
                             }
@@ -317,30 +317,30 @@ fn pawn_move(
                 }
                 15 | 23 | 7 => {
                     // 2nd from right
-                    match board[(index +3) as usize] {
+                    match board[(index + 3) as usize] {
                         Piece::Empty => {
-                            non_captures.push(index +3);
+                            non_captures.push(index + 3);
                             if board[(index + 4) as usize] == Piece::Empty {
                                 non_captures.push(index + 4);
                             }
                         }
-                        Piece::BlackPawn | Piece::BlackQueen  => {
-                            if board[(index +7) as usize] == Piece::Empty {
-                                captures.push(index +7);
+                        Piece::BlackPawn | Piece::BlackQueen => {
+                            if board[(index + 7) as usize] == Piece::Empty {
+                                captures.push(index + 7);
                             }
                         }
                         _ => {}
                     }
                 }
                 _ => {
-                    unreachable!("Shouldnt be here")
+                    unreachable!("Shouldnt be here ({})", index)
                 }
             }
         }
     }
     if captures.len() > 1 {
         for cap in captures {
-            if  cap > 31 {
+            if cap > 31 {
                 continue;
             }
             capture_chain.push(cap);
@@ -350,15 +350,83 @@ fn pawn_move(
             }
         }
         return capture_chain;
-    }
-    else if non_captures.len() > 1 {
+    } else if non_captures.len() > 1 {
         return non_captures;
-    }
-    else {
+    } else {
         return vec![ERROR_CODE_MOVES];
     }
 }
 
-fn queen_move(board: &[Piece; 32], index: u8, color: Color) -> Vec<u8> {
-    return vec![];
+fn queen_move(board: &[Piece; 32], index: u8, player_color: &Color) -> Vec<u8> {
+    let mut non_captures: Vec<u8> = vec![NON_CAPTURE_CODE];
+    let mut captures: Vec<u8> = vec![CAPTURE_CODE];
+    let mut capture_chain: Vec<u8> = vec![CAPTURE_CODE];
+
+    match player_color {
+        Color::Black => {
+            // Check for captures (prior to hitting the wall)
+            // Else remember the last move
+            // use 4 stacks ?
+            let fields = get_directly_adjacent_fields(index);
+            for (direction, field) in fields.iter().enumerate(){
+                if *field == EMPTY_CODE {
+                    break;
+                }
+                match board[*field as usize] {
+                    Piece::WhitePawn | Piece::WhiteQueen => {
+                        let target = get_directly_adjacent_fields(*field)[direction];
+                        if board[(target) as usize] == Piece::Empty {
+                            captures.push(target);
+                        }
+                    }
+                    Piece::Empty => non_captures.push(*field),
+                    _ => {}
+                }
+            }
+            
+        }
+        Color::White => {}
+    }
+
+    if captures.len() > 1 {
+        for cap in captures {
+            if cap > 31 {
+                continue;
+            }
+            capture_chain.push(cap);
+            let recursive_return_value = &mut queen_move(board, cap, player_color);
+            if (*recursive_return_value).len() > 1 && recursive_return_value[0] == CAPTURE_CODE {
+                capture_chain.append(recursive_return_value);
+            }
+        }
+        return capture_chain;
+    } else if non_captures.len() > 1 {
+        println!("ncaptures");
+        return non_captures;
+    } else {
+        return vec![ERROR_CODE_MOVES];
+    }
+}
+
+/// 0: Top-Left, 1: Bottom-Left, 2: Bottom-Right, 3: Top-Right
+pub fn get_directly_adjacent_fields(index: u8) -> [u8; 4] {
+    let mut fields = [EMPTY_CODE, EMPTY_CODE, EMPTY_CODE, EMPTY_CODE];
+    let row_idx_remainder = (index / 4) % 2;
+    if !TOP_ROW.contains(&index) {
+        if !LEFTMOST_COLUMN.contains(&index) {
+            fields[0] = index - (4 + row_idx_remainder);
+        }
+        if !RIGHTMOST_COLUMN.contains(&index) {
+            fields[3] = index - (3 + row_idx_remainder);
+        }
+    }
+    if !BOTTOM_ROW.contains(&index) {
+        if !LEFTMOST_COLUMN.contains(&index) {
+            fields[1] = index + 4 - row_idx_remainder;
+        }
+        if !RIGHTMOST_COLUMN.contains(&index) {
+            fields[2] = index + 5 - row_idx_remainder;
+        }
+    }
+    return fields;
 }

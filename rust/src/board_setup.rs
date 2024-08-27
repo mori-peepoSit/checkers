@@ -46,7 +46,7 @@ pub fn make_board(config: BoardConfig ) -> [Piece; 32] {
                 Piece::WhitePawn, Piece::WhitePawn, Piece::WhitePawn, Piece::WhitePawn,
                 Piece::Empty, Piece::Empty, Piece::Empty, Piece::Empty, 
                 Piece::Empty, Piece::WhitePawn, Piece::Empty, Piece::Empty, 
-                Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, 
+                Piece::Empty, Piece::BlackQueen, Piece::BlackPawn, Piece::BlackPawn, 
                 Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, 
                 Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, 
                 ];
@@ -62,6 +62,18 @@ pub fn make_board(config: BoardConfig ) -> [Piece; 32] {
                 Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, 
                 Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, 
                 ];
+        },
+        BoardConfig::ChainCaptureTest2 => {
+            return [
+                Piece::Empty,     Piece::Empty,     Piece::Empty,     Piece::Empty, 
+                Piece::Empty,     Piece::Empty,     Piece::Empty,     Piece::Empty, 
+                Piece::Empty,     Piece::WhitePawn, Piece::WhitePawn, Piece::Empty, 
+                Piece::Empty,     Piece::Empty,     Piece::Empty,     Piece::Empty, 
+                Piece::Empty,     Piece::WhitePawn, Piece::WhitePawn, Piece::Empty, 
+                Piece::Empty, Piece::BlackPawn, Piece::BlackQueen, Piece::BlackPawn, 
+                Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, 
+                Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, Piece::BlackPawn, 
+                ];
         }
         _ => {
             const PIECE: Piece = Piece::Empty;
@@ -71,7 +83,7 @@ pub fn make_board(config: BoardConfig ) -> [Piece; 32] {
     
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug)]
 pub enum Piece {
     Empty,
     WhitePawn,
@@ -111,5 +123,6 @@ pub enum BoardConfig {
     Default,
     CaptureTest,
     ChainCaptureTest,
+    ChainCaptureTest2,
     Empty,
 }
