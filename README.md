@@ -1,4 +1,4 @@
 # Checkers
 - Implementation of checkers in python (and rust)
-- Implemented a basic cpu player that one can play against
-- Using minimax with alpha-beta-pruning to improve performance for dfs for best moves for cpu player
+- Implemented a basic tree search of possible moves
+- Using minimax with alpha-beta-pruning to allow for deeper/faster searches
